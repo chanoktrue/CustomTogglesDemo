@@ -18,6 +18,8 @@ struct ContentView: View {
             BasicToggle()
             
             ChangingTogleStyle()
+            
+            CustomToggle()
         }
         .padding()
     }
@@ -60,6 +62,51 @@ struct ChangingTogleStyle: View {
         .tint(.green)
         .toggleStyle(.button)
         .clipShape(Circle())
+    }
+}
+
+
+struct CustomToggle: View {
+    @State private var isChecked : Bool = false
+    var body: some View {
+        Toggle(isOn: $isChecked) {
+            Text("Airplane mode")
+        }
+        .toggleStyle(CustomToggleStyle(systemImage: "airplane", activeColor: .purple))
+    }
+}
+
+struct CustomToggleStyle: ToggleStyle {
+    
+    var systemImage: String = "checkmark"
+    var activeColor: Color = .green
+    
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.label
+            
+            Spacer()
+            
+            RoundedRectangle(cornerRadius: 30)
+                .fill(configuration.isOn ? activeColor : Color(.systemGray))
+                .overlay {
+                    Circle()
+                        .fill(.white)
+                        .padding(3)
+                        .overlay {
+                            Image(systemName: systemImage)
+                                .foregroundColor(configuration.isOn ? activeColor : .red)
+                        }
+                        .offset(x: configuration.isOn ? 10 : -10)
+                }
+                .frame(width: 50, height: 32)
+                .onTapGesture {
+                    withAnimation(.spring()) {
+                        configuration.isOn.toggle()
+                    }
+                }
+                        
+        }
     }
 }
 
